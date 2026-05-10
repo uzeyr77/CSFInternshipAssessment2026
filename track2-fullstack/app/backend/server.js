@@ -15,8 +15,18 @@ app.use('/api/paddocks', paddocksRouter);
 
 initDb();
 
-app.listen(PORT, () => {
-  console.log(`FarmTracker running at http://localhost:${PORT}`);
-});
+function start(port = PORT) {
+  const server = app.listen(port, () => {
+    const address = server.address();
+    const resolvedPort = address && typeof address === 'object' ? address.port : port;
+    console.log(`FarmTracker running at http://localhost:${resolvedPort}`);
+  });
+  return server;
+}
+
+if (require.main === module) {
+  start();
+}
 
 module.exports = app;
+module.exports.start = start;

@@ -19,7 +19,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Running tests
 
-With the server running in one terminal:
+The test suite starts its own server and temporary SQLite database:
 
 ```bash
 cd backend

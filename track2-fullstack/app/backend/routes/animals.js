@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../db');
 
-// BUG B1: `page` is used as a raw row offset, not a page number.
-// page=0&limit=5 → rows 0–4 (correct for page 1)
-// page=1&limit=5 → rows 1–5 (skips first animal, off by one from here on)
 router.get('/', (req, res) => {
   const page = parseInt(req.query.page) || 0;
   const limit = parseInt(req.query.limit) || 10;
@@ -13,7 +10,6 @@ router.get('/', (req, res) => {
     'SELECT * FROM animals LIMIT ? OFFSET ?'
   ).all(limit, page);
 
-  // BUG A1: N+1 — one extra query per animal to fetch its latest health event
   const result = animals.map(animal => {
     const latestEvent = db.prepare(`
       SELECT * FROM health_events
@@ -27,7 +23,6 @@ router.get('/', (req, res) => {
   res.json(result);
 });
 
-// BUG B3: returns 200 instead of 201
 router.post('/', (req, res) => {
   const { name, tag_number, breed, date_of_birth, paddock_id } = req.body;
 
@@ -46,7 +41,7 @@ router.post('/', (req, res) => {
   ).run(name, tag_number, breed ?? null, date_of_birth ?? null, paddock_id ?? null);
 
   const animal = db.prepare('SELECT * FROM animals WHERE id = ?').get(result.lastInsertRowid);
-  res.json(animal); // BUG B3: should be res.status(201).json(animal)
+  res.json(animal);
 });
 
 router.get('/:id', (req, res) => {
@@ -55,7 +50,6 @@ router.get('/:id', (req, res) => {
   res.json(animal);
 });
 
-// BUG B2: when an animal changes paddock, the old paddock's count is never decremented
 router.put('/:id', (req, res) => {
   const animal = db.prepare('SELECT * FROM animals WHERE id = ?').get(req.params.id);
   if (!animal) return res.status(404).json({ error: 'Animal not found' });
@@ -74,7 +68,6 @@ router.put('/:id', (req, res) => {
         'UPDATE paddocks SET animal_count = animal_count + 1 WHERE id = ?'
       ).run(updates.paddock_id);
     }
-    // BUG B2: missing decrement for animal.paddock_id
   }
 
   db.prepare(`
@@ -87,7 +80,6 @@ router.put('/:id', (req, res) => {
   res.json(updated);
 });
 
-// BUG B3: returns 200 with body instead of 204 No Content
 router.delete('/:id', (req, res) => {
   const animal = db.prepare('SELECT * FROM animals WHERE id = ?').get(req.params.id);
   if (!animal) return res.status(404).json({ error: 'Animal not found' });
@@ -99,7 +91,7 @@ router.delete('/:id', (req, res) => {
   }
 
   db.prepare('DELETE FROM animals WHERE id = ?').run(req.params.id);
-  res.json({ message: 'deleted' }); // BUG B3: should be res.status(204).send()
+  res.json({ message: 'deleted' });
 });
 
 router.get('/:id/health-events', (req, res) => {

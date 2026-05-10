@@ -17,7 +17,7 @@ The app mostly works, but it has known issues and a missing feature. Your job is
 
 ## The Application
 
-FarmTracker is a small REST API (Python / FastAPI) with a simple HTML/JS frontend. It manages:
+FarmTracker is a small REST API (Node.js / Express) with a simple HTML/JS frontend. It manages:
 
 - **Paddocks** — named enclosures with a defined capacity
 - **Animals** — individual livestock assigned to a paddock, with breed and date of birth
@@ -63,7 +63,7 @@ After you're done:
 
 ## Stack
 
-The starter app uses Python/FastAPI with SQLite. You are welcome to refactor to a different stack, but if you do, briefly justify the change in your `RETRO.md`. We care more about the quality of your thinking than the specific technology.
+The starter app uses Node.js, Express, and SQLite. You are welcome to refactor to a different stack, but if you do, briefly justify the change in your `RETRO.md`. We care more about the quality of your thinking than the specific technology.
 
 ---
 
