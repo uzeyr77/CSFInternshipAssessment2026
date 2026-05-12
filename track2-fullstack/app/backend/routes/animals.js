@@ -30,15 +30,24 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'name and tag_number are required' });
   }
 
-  if (paddock_id) {
-    db.prepare(
+  let result;
+  db.exec('BEGIN');
+  try {
+    result = db.prepare(
+    'INSERT INTO animals (name, tag_number, breed, date_of_birth, paddock_id) VALUES(?, ?, ?, ?, ?)'
+    ).run(name, tag_number, breed ?? null, date_of_birth ?? null, paddock_id ?? null);
+    
+    if (paddock_id) {
+      db.prepare(
       'UPDATE paddocks SET animal_count = animal_count + 1 WHERE id = ?'
-    ).run(paddock_id);
-  }
-
-  const result = db.prepare(
-    'INSERT INTO animals (name, tag_number, breed, date_of_birth, paddock_id) VALUES (?, ?, ?, ?, ?)'
-  ).run(name, tag_number, breed ?? null, date_of_birth ?? null, paddock_id ?? null);
+      ).run(paddock_id);
+    }
+    
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }  
 
   const animal = db.prepare('SELECT * FROM animals WHERE id = ?').get(result.lastInsertRowid);
   res.json(animal);
