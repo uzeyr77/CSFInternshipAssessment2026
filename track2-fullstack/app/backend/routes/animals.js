@@ -63,6 +63,15 @@ router.put('/:id', (req, res) => {
   const animal = db.prepare('SELECT * FROM animals WHERE id = ?').get(req.params.id);
   if (!animal) return res.status(404).json({ error: 'Animal not found' });
 
+  for (const field of ['name', 'tag_number']) {
+    if (field in req.body) {
+      const v = req.body[field];
+      if(typeof v !== 'string' || v.trim() === '') {
+        return res.status(400).json({ error: `${field} cannot be empty` });
+      }
+    }
+  }
+
   const updates = {
     name:          req.body.name          ?? animal.name,
     tag_number:    req.body.tag_number    ?? animal.tag_number,
