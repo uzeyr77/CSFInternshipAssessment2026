@@ -55,12 +55,12 @@
       document.title = `${animal.name} — FarmTracker`;
       document.getElementById('animal-detail').innerHTML = `
         <div class="animal-header">
-          <h2>${animal.name}<span class="tag">${animal.tag_number}</span></h2>
+          <h2>${esc(animal.name)}<span class="tag">${esc(animal.tag_number)}</span></h2>
         </div>
         <dl>
-          <dt>Breed</dt>       <dd>${animal.breed ?? '—'}</dd>
-          <dt>Date of Birth</dt><dd>${animal.date_of_birth ?? '—'}</dd>
-          <dt>Paddock</dt>     <dd>${animal.paddock_id ?? 'Unassigned'}</dd>
+          <dt>Breed</dt>       <dd>${esc(animal.breed ?? '—')}</dd>
+          <dt>Date of Birth</dt><dd>${esc(animal.date_of_birth ?? '—')}</dd>
+          <dt>Paddock</dt>     <dd>${esc(animal.paddock_id ?? 'Unassigned')}</dd>
         </dl>
       `;
 
@@ -74,10 +74,10 @@
       tbody.innerHTML = events.length
         ? events.map(e => `
             <tr>
-              <td>${e.date}</td>
-              <td>${e.event_type}</td>
-              <td>${e.vet_name ?? '—'}</td>
-              <td>${e.notes ?? '—'}</td>
+              <td>${esc(e.date)}</td>
+              <td>${esc(e.event_type)}</td>
+              <td>${esc(e.vet_name ?? '—')}</td>
+              <td>${esc(e.notes ?? '—')}</td>
             </tr>
           `).join('')
         : '<tr><td colspan="4" class="empty">No events recorded.</td></tr>';

@@ -1,5 +1,16 @@
 const API_BASE = '/api';
 
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+}
+
+
 const api = {
   async get(path) {
     const res = await fetch(API_BASE + path);

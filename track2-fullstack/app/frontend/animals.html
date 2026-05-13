@@ -60,11 +60,11 @@
           : '—';
         return `
           <tr>
-            <td>${a.tag_number}</td>
-            <td>${a.name}</td>
-            <td>${a.breed ?? '—'}</td>
-            <td>${a.paddock_id ?? '—'}</td>
-            <td>${event}</td>
+            <td>${esc(a.tag_number)}</td>
+            <td>${esc(a.name)}</td>
+            <td>${esc(a.breed ?? '—')}</td>
+            <td>${esc(a.paddock_id ?? '—')}</td>
+            <td>${esc(event)}</td>
             <td><a href="animal-detail.html?id=${a.id}">View</a></td>
           </tr>
         `;
