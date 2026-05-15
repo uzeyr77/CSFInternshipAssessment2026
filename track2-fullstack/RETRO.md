@@ -12,11 +12,9 @@ Currently `routes/animals.js` handles animal CRUD, health events, and weights in
 - **Pagination accepts unsafe values.** `?limit=999999` could return the entire table (memory pressure), and
 `?page=-5` triggers a bare 500. Trivial at seed size; before production, I would clamp `limit` to a fair max and reject negative
 `page`.
-- **N+1 query in `GET /animals`.** Each animal row triggers a separate query for its latest health event. Negligible at
-this scale; before production I would batch-fetch events for all returned animal IDs in one query.
+- **N+1 query in `GET /animals`.** Each animal row triggers a separate query for its latest health event. Negligible at this scale; before production I would batch-fetch events for all returned animal IDs in one query.
 - **DB constraint violations return bare 500s instead of semantic 4xx.** A duplicate `tag_number` on `POST /animals`
-currently returns 500 when it should be 409 Conflict. Fine at this scope; before production I would map known constraint
-errors to appropriate 4xx codes with clear messages.
+currently returns 500 when it should be 409 Conflict. Fine at this scope; before production I would map known constraint errors to appropriate 4xx codes with clear messages.
 
 
 
