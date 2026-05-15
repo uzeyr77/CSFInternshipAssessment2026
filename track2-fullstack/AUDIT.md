@@ -30,11 +30,10 @@ All three pages build markup with template literals and assign to `innerHTML`. A
 
 - **N+1 query in `GET /animals`** — fine at this scale.
 - **DB errors return bare 500s** instead of 4xx with a message.
-- **`POST /animals` returns 200 instead of 201** — cosmetic.
 - **Pagination accepts unsafe values** — `?page=-5` throws, `?limit=999999` dumps the table.
-- **"Fetch animal or 404" repeated five times** — middleware candidate.
-- **No auth, no rate limiting** — out of scope.
+
 
 ## Architectural concern
 
-Bugs #1 and #3 share a root cause: `paddocks.animal_count` is a denormalized cache hand-maintained across three routes. Migration plan in [`ARCH_PROPOSAL.md`](./ARCH_PROPOSAL.md).
+
+Bugs #1 and #3 share a root cause: `paddocks.animal_count` is a denormalized cache hand-maintained across three routes causing inconsistencies. Migration plan in [`ARCH_PROPOSAL.md`](./ARCH_PROPOSAL.md).
